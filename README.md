@@ -48,7 +48,7 @@ To solve this problem, I have developed a CI/CD pipeline that automates the enti
 # Pipeline Design
 
 ## Diagram
-[Design HERE]
+![Pipeline Diagram](https://github.ncsu.edu/atmai/CSC519_Project/blob/main/Screenshot%202025-10-27%20164149.png)
 
 ## Architecture Components
 
