@@ -6,6 +6,9 @@ Currently, the coffee ordering application is under development while also being
 
 To solve this problem, I have developed a CI/CD pipeline that automates the entire process of our coffee-ordering system. The pipeline automatically builds and tests the applications whenever new changes are pushed to the repository. This will ensure that new updates are verified before deployment. This will minimize downtime, reduce the risk of human errors, and enable faster delivery of features and bug fixes. By using a CI/CD pipeline, we ensure that developers can focus on improving the application while operations remain stable and consistent.
 
+# User Story
+As a developer on the coffee application team, I want to have an automated CI/CD pipeline that builds, tests, and deploys new changes whenever code is pushed, so I can ensure reliable updates, minimize manual work, and deliver new features without having to shut down the system.
+
 # Use Case
 
 ## Deployment of new feature from feature branch to release branch
