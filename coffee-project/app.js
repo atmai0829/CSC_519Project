@@ -7,8 +7,8 @@ const app = express();
 const PORT = 3000;
 
 app.use(express.json());
-app.use(express.static('public')); 
-module.exports = app
+app.use(express.static('public'));
+module.exports = app;
 
 // Endpoint to fetch available coffees
 app.get('/coffees', (req, res) => {
@@ -19,7 +19,7 @@ app.get('/coffees', (req, res) => {
 app.post('/order', (req, res) => {
   const { coffeeId, quantity } = req.body;
 
-  const coffee = coffees.find(c => c.id === coffeeId);
+  const coffee = coffees.find((c) => c.id === coffeeId);
 
   if (!coffee) {
     return res.status(400).json({ error: 'Invalid coffee ID' });
@@ -29,7 +29,7 @@ app.post('/order', (req, res) => {
     orderId: orders.length + 1,
     coffeeName: coffee.name,
     quantity,
-    total: coffee.price * quantity
+    total: coffee.price * quantity,
   };
 
   orders.push(order);
