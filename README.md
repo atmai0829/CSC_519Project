@@ -7,26 +7,28 @@ Currently, the coffee ordering application is under development while also being
 To solve this problem, I have developed a CI/CD pipeline that automates the entire process of our coffee-ordering system. The pipeline automatically builds and tests the applications whenever new changes are pushed to the repository. This will ensure that new updates are verified before deployment. This will minimize downtime, reduce the risk of human errors, and enable faster delivery of features and bug fixes. By using a CI/CD pipeline, we ensure that developers can focus on improving the application while operations remain stable and consistent.
 
 # User Story
+
 As a developer on the coffee application team, I want to have an automated CI/CD pipeline that builds, tests, and deploys new changes whenever code is pushed, so I can ensure reliable updates, minimize manual work, and deliver new features without having to shut down the system.
 
 # Use Case
 
 ## Deployment of new feature from feature branch to release branch
-* 1 Preconditions
+
+- 1 Preconditions
   - GitHub Actions workflow set to run linting, testing, building, and deployment steps.
   - A ansible playbook for deployment is properly configured and has access to the target server
   - Target deployment environment has Docker installed and is reachable from the CI/CD pipeline
   - Secrets and credentials are safely stored in the repo's secrets
   - Testing framework is implemented and functional
   - A feature branch exists.
-* 2 Main Flow
+- 2 Main Flow
   - A developer creates a PR to release branch from dev branch [S1]
   - The Github Actions pipeline triggers automatically [S2][E1]
   - Code quality and style compliance check [S3][E2]
   - Tests runs [S4][E3]
   - If all checks pass, the Ansible playbook runs to deploy the updated containerized application to the target environment[E4]
   - The application is redeployed using Docker[E5]
-* 3 Subflows
+- 3 Subflows
 
   - [S1] User provides PR message and requests appropriate reviewers.
 
@@ -36,8 +38,8 @@ As a developer on the coffee application team, I want to have an automated CI/CD
 
   - [S4] GitHub Actions creates test environment to execute unit tests to verify functionality
 
-* 4 Alternative Flows
-  
+- 4 Alternative Flows
+
   - [E1] Compilation fails
 
   - [E2] Code has syntax errors
@@ -51,6 +53,7 @@ As a developer on the coffee application team, I want to have an automated CI/CD
 # Pipeline Design
 
 ## Diagram
+
 ![Pipeline Diagram](https://github.ncsu.edu/atmai/CSC519_Project/blob/main/Screenshot%202025-10-27%20164149.png)
 
 ## Architecture Components
@@ -75,3 +78,5 @@ All deployments automated by Ansible playbooks
 Application will run inside Docker container for reproduciblity
 Code must pass ESLint and ansible lint checks before merge
 Mocha, Chai, and Supertest will test endpoints
+
+# Changed to Test Workflow
