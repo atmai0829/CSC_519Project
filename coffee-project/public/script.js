@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const listItem = document.createElement('li');
         listItem.textContent = `${coffee.name} - $${coffee.price}`;
         const orderButton = document.createElement('button');
-        orderButton.textContent = "Order";
+        orderButton.textContent = 'Order';
         orderButton.onclick = () => placeOrder(coffee.id);
         listItem.appendChild(orderButton);
         coffeeList.appendChild(listItem);
