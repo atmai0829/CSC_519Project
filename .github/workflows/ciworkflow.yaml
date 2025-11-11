@@ -10,9 +10,9 @@ jobs:
     runs-on: self-hosted
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: "18.x"
       - name: Install dependencies
@@ -27,7 +27,7 @@ jobs:
     runs-on: self-hosted
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Run ansible-lint
         uses: ansible/ansible-lint@v25.8.2
 
@@ -37,9 +37,9 @@ jobs:
     needs: [lint-javascript, lint-ansible]
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: "18.x"
       - name: Install dependencies
@@ -55,7 +55,7 @@ jobs:
     needs: [test]
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Build Docker Image
         working-directory: ./coffee-project
         run: docker build -t coffee-project:latest .
