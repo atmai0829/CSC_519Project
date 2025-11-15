@@ -5,27 +5,6 @@ on:
   push:
     branches: ["main", "dev", "release*"]
 jobs:
-  setup:
-    name: Setup Dependencies
-    runs-on: self-hosted
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-      - name: Setup Python Virtual Environment
-        run: |
-          # Create virtual environment
-          python3 -m venv ~/ansible-venv
-
-          # Activate and install packages
-          source ~/ansible-venv/bin/activate
-          pip install ansible-core docker
-
-          # Install Docker collection
-          ansible-galaxy collection install community.docker
-
-          # Make sure venv is available for subsequent steps
-          echo "source ~/ansible-venv/bin/activate" >> ~/.bashrc
-
   lint-javascript:
     name: ESLint
     runs-on: self-hosted
@@ -46,10 +25,11 @@ jobs:
   lint-ansible:
     name: Ansible Lint
     runs-on: self-hosted
-    needs: [setup]
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+      - name: Install Docker Collection for Linting
+        run: ansible-galaxy collection install community.docker
       - name: Run ansible-lint
         uses: ansible/ansible-lint@v25.8.2
 
