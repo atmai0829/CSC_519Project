@@ -34,6 +34,7 @@ jobs:
   lint-ansible:
     name: Ansible Lint
     runs-on: self-hosted
+    needs: [setup]
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
