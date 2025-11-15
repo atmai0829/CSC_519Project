@@ -3,28 +3,28 @@
 
 - name: Deploy applications
   hosts: myserver
-  become: yes
+  become: true
   collections:
     - community.docker
 
   tasks:
     # Stop docker existing container
     - name: Stop existing container
-      docker_container:
+      community.docker.docker_container:
         name: "{{ docker_container_name }}"
         state: stopped
-      ignore_errors: yes
+      ignore_errors: true
 
     # Remove the old container
     - name: Remove existing container
-      docker_container:
+      community.docker.docker_container:
         name: "{{ docker_container_name }}"
         state: absent
-      ignore_errors: yes
+      ignore_errors: true
 
     # Run new container
     - name: Run new Docker container
-      docker_container:
+      community.docker.docker_container:
         name: "{{ docker_container_name }}"
         image: "{{ docker_image }}"
         state: started
