@@ -11,12 +11,36 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      - name: Install Ansible Docker Collection
+      - name: Check Available Python Tools
         run: |
-          pip3 install --user ansible-core docker
+          echo "Checking available Python tools..."
+          which python3 || echo "python3 not found"
+          which pip || echo "pip not found"
+          which pip3 || echo "pip3 not found"
+          which apt || echo "apt not found"
+          python3 --version || echo "python3 version check failed"
+      - name: Install Ansible via Python
+        run: |
+          # Try different installation methods
+          if command -v pip &> /dev/null; then
+            pip install --user ansible-core docker
+          elif command -v python3 &> /dev/null && python3 -m pip --version &> /dev/null; then
+            python3 -m pip install --user ansible-core docker
+          else
+            echo "No pip available, trying alternative..."
+            # Download and install pip
+            curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+            python3 get-pip.py --user
+            export PATH="$HOME/.local/bin:$PATH"
+            pip install --user ansible-core docker
+          fi
+
+          # Add to PATH
           export PATH="$HOME/.local/bin:$PATH"
-          ansible-galaxy collection install community.docker --user
           echo "$HOME/.local/bin" >> $GITHUB_PATH
+
+          # Install Docker collection
+          ansible-galaxy collection install community.docker --user
 
   lint-javascript:
     name: ESLint
