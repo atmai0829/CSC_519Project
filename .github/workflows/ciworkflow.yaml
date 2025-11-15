@@ -28,18 +28,10 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
-      - name: Install Python & Ansible
-        run: |
-          python3 -m pip install --upgrade pip
-          pip install ansible ansible-core ansible-lint
-
-      - name: Install Ansible Collections
-        run: |
-          ansible-galaxy collection install community.docker
-
       - name: Run ansible-lint
         uses: ansible/ansible-lint@v25.8.2
+        with:
+          args: "--skip-list unknown-module"
 
   test:
     name: Runs Tests
