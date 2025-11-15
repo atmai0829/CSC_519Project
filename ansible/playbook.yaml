@@ -1,0 +1,32 @@
+---
+- import_playbook: security.yaml
+
+- name: Deploy applications
+  hosts: myserver
+  become: yes
+  collections:
+    - community.docker
+
+  tasks:
+    # Stop docker existing container
+    - name: Stop existing container
+      community.docker.docker_container:
+        name: "{{ docker_container_name }}"
+        state: stopped
+      ignore_errors: yes
+
+    # Remove the old container
+    - name: Remove existing container
+      community.docker.docker_container:
+        name: "{{ docker_container_name }}"
+        state: absent
+      ignore_errors: yes
+
+    # Run new container
+    - name: Run new Docker container
+      community.docker.docker_container:
+        name: "{{ docker_container_name }}"
+        image: "{{ docker_image }}"
+        state: started
+        ports:
+          - "3000:3000"

@@ -1,0 +1,6 @@
+[myserver]
+csc519-119-host.csc.ncsu.edu ansible_user=atmai
+
+[myserver:vars]
+docker_container_name=coffee-project-container
+docker_image=coffee-project:latest

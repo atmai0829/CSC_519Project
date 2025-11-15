@@ -59,3 +59,13 @@ jobs:
       - name: Build Docker Image
         working-directory: ./coffee-project
         run: docker build -t coffee-project:latest .
+
+  deploy:
+    name: Deploy Application
+    runs-on: self-hosted
+    needs: [build]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Run Ansible Playbook
+        run: ansible-playbook -i ansible/hosts ansible/playbook.yaml
