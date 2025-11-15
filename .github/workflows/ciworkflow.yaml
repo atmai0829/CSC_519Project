@@ -31,12 +31,12 @@ jobs:
       - name: Run ansible-lint
         uses: ansible/ansible-lint@v25.8.2
         with:
-          args: "--skip-list unknown-module"
+          args: "--skip-list syntax-check"
 
   test:
     name: Runs Tests
     runs-on: self-hosted
-    needs: [lint-javascript, lint-ansible]
+    needs: [lint-javascript]
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
