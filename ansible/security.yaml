@@ -1,31 +1,32 @@
 ---
 - name: Ensure security configurations
   hosts: all
-  become: yes
+  become: true
   tasks:
     - name: Update the package list
-      apt:
-        update_cache: yes
+      ansible.builtin.apt:
+        update_cache: true
 
     - name: Upgrade all packages
-      apt:
+      ansible.builtin.apt:
         upgrade: dist
-        only_upgrade: yes
+        only_upgrade: true
         cache_valid_time: 3600
 
     - name: Ensure unattended-upgrades is installed
-      apt:
+      ansible.builtin.apt:
         name: unattended-upgrades
         state: present
 
     - name: Enable automatic security updates
-      copy:
+      ansible.builtin.copy:
         dest: /etc/apt/apt.conf.d/20auto-upgrades
         content: |
           APT::Periodic::Update-Package-Lists "1";
           APT::Periodic::Unattended-Upgrade "1";
+        mode: "0644"
 
     - name: Run unattended upgrades to apply security patches
-      command: unattended-upgrade -d
+      ansible.builtin.command: unattended-upgrade -d
       register: unattened_result
       changed_when: "'Packages that will be upgraded:' in unattended_result.stdout"
