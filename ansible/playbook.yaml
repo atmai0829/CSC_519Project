@@ -5,8 +5,6 @@
 - name: Deploy applications
   hosts: myserver
   become: false
-  collections:
-    - community.docker
 
   tasks:
     # Stop existing container (ignore if not found)
