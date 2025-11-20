@@ -7,25 +7,25 @@
   become: false
 
   tasks:
-    # Stop existing container (ignore if not found)
+    - name: Check if container exists
+      community.docker.docker_container_info:
+        name: "{{ docker_container_name }}"
+      register: container_info
+      failed_when: false
+
+    # Stop existing container
     - name: Stop existing container
       community.docker.docker_container:
         name: "{{ docker_container_name }}"
         state: stopped
-      register: stop_result
-      failed_when:
-        - stop_result.failed
-        - "'No such container' not in stop_result.msg | default('')"
+      when: container_info.containers | length > 0
 
-    # Remove existing container (ignore if not found)
+    # Remove existing container
     - name: Remove existing container
       community.docker.docker_container:
         name: "{{ docker_container_name }}"
         state: absent
-      register: remove_result
-      failed_when:
-        - remove_result.failed
-        - "'No such container' not in remove_result.msg | default('')"
+      when: container_info.containers | length > 0
 
     # Run new container
     - name: Run new Docker container
