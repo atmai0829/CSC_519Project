@@ -13,8 +13,9 @@
         name: "{{ docker_container_name }}"
         state: stopped
       register: stop_result
-      failed_when: stop_result.failed and
-        "'No such container' not in stop_result.msg"
+      failed_when:
+        - stop_result.failed
+        - "'No such container' not in (stop_result.msg | default(''))"
 
     # Remove the old container
     - name: Remove existing container
@@ -22,8 +23,9 @@
         name: "{{ docker_container_name }}"
         state: absent
       register: remove_result
-      failed_when: remove_result.failed and
-        "'No such container' not in remove_result.msg"
+      failed_when:
+        - remove_result.failed
+        - "'No such container' not in (remove_result.msg | default(''))"
 
     # Run new container
     - name: Run new Docker container
