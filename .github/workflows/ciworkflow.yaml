@@ -34,8 +34,8 @@ jobs:
           python-version: "3.11"
       - name: Install ansible and ansible-lint
         run: |
-          python3 -m pip install --upgrade --user ansible ansible-lint
-          export PATH=$HOME/.local/bin:$PATH
+          pip install ansible ansible-lint
+      - name: Install community.docker
         run: |
           ansible-galaxy collection install community.docker
       - name: Run ansible-lint
@@ -77,6 +77,14 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install ansible and community.docker
+        run: |
+          pip install ansible
+          ansible-galaxy collection install community.docker
       - name: Run Ansible Playbook
         run: |
           ansible-playbook -i ansible/hosts ansible/playbook.yaml
