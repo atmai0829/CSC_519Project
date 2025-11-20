@@ -8,24 +8,25 @@
 
   tasks:
     # Stop docker existing container
-    - name: Stop existing container
-      community.docker.docker_container:
-        name: "{{ docker_container_name }}"
-        state: stopped
-      register: stop_result
-      failed_when:
-        - stop_result.failed
-        - "'No such container' not in stop_result.msg | default('')"
+    # - name: Stop existing container
+    #   community.docker.docker_container:
+    #     name: "{{ docker_container_name }}"
+    #     state: stopped
+    #   register: stop_result
+    #   failed_when:
+    #     - stop_result.failed
+    #     - "'No such container' not in stop_result.msg | default('')"
 
     # Remove the old container
     - name: Remove existing container
       community.docker.docker_container:
         name: "{{ docker_container_name }}"
         state: absent
-      register: remove_result
-      failed_when:
-        - remove_result.failed
-        - "'No such container' not in remove_result.msg | default('')"
+        force: true
+      # register: remove_result
+      # failed_when:
+      #   - remove_result.failed
+      #   - "'No such container' not in remove_result.msg | default('')"
 
     # Run new container
     - name: Run new Docker container
