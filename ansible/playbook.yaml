@@ -1,6 +1,6 @@
 ---
-- name: Apply security configuartion
-  import_playbook: security.yaml
+# - name: Apply security configuartion
+#   import_playbook: security.yaml
 
 - name: Deploy applications
   hosts: myserver
