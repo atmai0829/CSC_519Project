@@ -1,11 +1,10 @@
 ---
-- import_playbook: security.yaml
+- name: Apply security configuartion
+  import_playbook: security.yaml
 
 - name: Deploy applications
   hosts: myserver
   become: true
-  collections:
-    - community.docker
 
   tasks:
     # Stop docker existing container
@@ -13,14 +12,18 @@
       community.docker.docker_container:
         name: "{{ docker_container_name }}"
         state: stopped
-      ignore_errors: true
+      register: stop_result
+      failed_when: stop_result.failed and
+        "'No such container' not in stop_result.msg"
 
     # Remove the old container
     - name: Remove existing container
       community.docker.docker_container:
         name: "{{ docker_container_name }}"
         state: absent
-      ignore_errors: true
+      register: remove_result
+      failed_when: remove_result.failed and
+        "'No such container' not in remove_result.msg"
 
     # Run new container
     - name: Run new Docker container
