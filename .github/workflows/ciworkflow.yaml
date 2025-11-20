@@ -34,7 +34,7 @@ jobs:
   test:
     name: Runs Tests
     runs-on: self-hosted
-    needs: [lint-javascript]
+    needs: [lint-javascript, lint-ansible]
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
