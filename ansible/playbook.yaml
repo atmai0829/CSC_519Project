@@ -4,7 +4,7 @@
 
 - name: Deploy applications
   hosts: myserver
-  become: true
+  become: false
 
   tasks:
     # Stop docker existing container
