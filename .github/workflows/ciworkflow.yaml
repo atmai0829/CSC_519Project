@@ -57,6 +57,8 @@ jobs:
         run: npm install
       - name: Run Tests
         working-directory: ./coffee-project
+        env:
+          PORT: 4000
         run: npm test
 
   build:
