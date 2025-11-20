@@ -71,20 +71,51 @@ jobs:
         run: docker build -t coffee-project:latest .
 
   deploy:
-    name: Deploy Application
-    runs-on: self-hosted
-    needs: [build]
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-      - name: Install ansible and community.docker
-        run: |
-          pip install ansible
-          ansible-galaxy collection install community.docker
-      - name: Run Ansible Playbook
-        run: |
-          ansible-playbook -i ansible/hosts ansible/playbook.yaml
+  name: Deploy Application
+  runs-on: self-hosted
+  needs: [build]
+  environment: production
+  steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.11"
+
+    - name: Install Ansible and Dependencies
+      run: |
+        pip install ansible docker
+        ansible-galaxy collection install community.docker
+
+    - name: Setup SSH Key
+      run: |
+        # Create SSH key from secret
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" > /tmp/ssh_key
+        chmod 600 /tmp/ssh_key
+
+        # Create SSH config
+        mkdir -p ~/.ssh
+        echo "Host ${{ secrets.SSH_HOST }}" >> ~/.ssh/config
+        echo "  HostName ${{ secrets.SSH_HOST }}" >> ~/.ssh/config
+        echo "  User ${{ secrets.SSH_USER }}" >> ~/.ssh/config
+        echo "  IdentityFile /tmp/ssh_key" >> ~/.ssh/config
+        echo "  StrictHostKeyChecking no" >> ~/.ssh/config
+        echo "  UserKnownHostsFile /dev/null" >> ~/.ssh/config
+
+    - name: Create Dynamic Hosts File
+      run: |
+        # Replace placeholders in hosts file with actual values
+        sed -e "s/{{ SSH_HOST }}/${{ secrets.SSH_HOST }}/g" \
+            -e "s/{{ SSH_USER }}/${{ secrets.SSH_USER }}/g" \
+            ansible/hosts > /tmp/hosts
+
+    - name: Run Ansible Playbook
+      run: |
+        ansible-playbook -i /tmp/hosts ansible/playbook.yaml
+
+    - name: Cleanup SSH Key
+      run: |
+        rm -f /tmp/ssh_key /tmp/hosts
+      if: always()
