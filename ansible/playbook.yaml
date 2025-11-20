@@ -18,14 +18,14 @@
       community.docker.docker_container:
         name: "{{ docker_container_name }}"
         state: stopped
-      when: container_info.containers | length > 0
+      when: (container_info.containers | default([])) | length > 0
 
     # Remove existing container
     - name: Remove existing container
       community.docker.docker_container:
         name: "{{ docker_container_name }}"
         state: absent
-      when: container_info.containers | length > 0
+      when: (container_info.containers | default([])) | length > 0
 
     # Run new container
     - name: Run new Docker container
