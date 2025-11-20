@@ -79,5 +79,4 @@ jobs:
         uses: actions/checkout@v4
       - name: Run Ansible Playbook
         run: |
-          source ~/ansible-venv/bin/activate
           ansible-playbook -i ansible/hosts ansible/playbook.yaml
