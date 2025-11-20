@@ -1,7 +1,7 @@
 ---
 - name: Ensure security configurations
   hosts: all
-  become: true
+  become: false
   tasks:
     - name: Update the package list
       ansible.builtin.apt:
