@@ -29,7 +29,6 @@ As a developer on the coffee application team, I want to have an automated CI/CD
   - If all checks pass, the Ansible playbook runs to deploy the updated containerized application to the target environment[E4]
   - The application is redeployed using Docker[E5]
 - 3 Subflows
-
   - [S1] User provides PR message and requests appropriate reviewers.
 
   - [S2] Github Actions pipeline triggers even on commits on feature branch
@@ -39,7 +38,6 @@ As a developer on the coffee application team, I want to have an automated CI/CD
   - [S4] GitHub Actions creates test environment to execute unit tests to verify functionality
 
 - 4 Alternative Flows
-
   - [E1] Compilation fails
 
   - [E2] Code has syntax errors
@@ -78,5 +76,76 @@ All deployments automated by Ansible playbooks
 Application will run inside Docker container for reproduciblity
 Code must pass ESLint and ansible lint checks before merge
 Mocha, Chai, and Supertest will test endpoints
+
+# Deploying with a Self-Hosted GitHub Actions Runner
+
+These are the general steps to stand up a self-hosted runner and deployment target on any server (VCL, EC2, on-prem VM, etc.).
+
+1. Connect to the target server:
+
+   ```bash
+   ssh <user>@<server-ip>
+   ```
+
+2. Install Docker on the server:
+
+   ```bash
+   curl -fsSL https://get.docker.com | sudo sh
+   sudo usermod -aG docker <user>
+   ```
+
+3. Install Ansible:
+
+   ```bash
+   sudo apt install -y python3-pip
+   pip3 install ansible
+   ```
+
+4. Set up an SSH key pair for the Ansible deploy step (needed even if the server deploys to itself):
+
+   ```bash
+   ssh-keygen -t ed25519 -C "deploy-key" -f ~/.ssh/deploy_key -N ""
+   cat ~/.ssh/deploy_key.pub >> ~/.ssh/authorized_keys
+   chmod 600 ~/.ssh/authorized_keys
+   cat ~/.ssh/deploy_key
+   ```
+
+   Copy the printed private key into the GitHub repository secret `SSH_PRIVATE_KEY`.
+
+5. Register the server as a self-hosted GitHub Actions runner (Settings → Actions → Runners → New self-hosted runner for the exact download URL and token):
+
+   ```bash
+   mkdir actions-runner && cd actions-runner
+   curl -o actions-runner-linux-x64.tar.gz -L <runner download URL>
+   tar xzf actions-runner-linux-x64.tar.gz
+   ./config.sh --url <repository URL> --token <TOKEN>
+   ```
+
+6. Run the runner as a persistent service so it survives reboots and disconnects:
+
+   ```bash
+   sudo ./svc.sh install
+   sudo ./svc.sh start
+   ```
+
+   Group membership changes (like adding the runner's user to `docker`) only take effect for new processes, so restart the runner service after making them.
+
+7. Set the following GitHub repository secrets (Settings → Secrets and variables → Actions):
+   - `SSH_HOST` = the server's IP or hostname
+   - `SSH_USER` = the SSH user on the server
+   - `SSH_PRIVATE_KEY` = contents of `~/.ssh/deploy_key`
+
+8. Push a commit to `main`, `dev`, or a `release*` branch. The workflow runs `lint-javascript` → `lint-ansible` → `test` → `build` → `deploy` on the self-hosted runner, and the `deploy` job runs the Ansible playbook to stop/remove the old container and start the new `coffee-project:latest` image.
+
+9. Verify the deployment:
+
+   ```bash
+   docker ps                     # confirm 0.0.0.0:3000->3000/tcp
+   curl http://localhost:3000    # confirm page content
+   ```
+
+   Then load `http://<server-ip>:3000` in a browser to confirm the site is reachable, opening the relevant firewall/security group rule for port 3000 if needed.
+
+   Then load `http://152.7.179.116:3000` in a browser to see the live site.
 
 # Changed to Test Workflow
